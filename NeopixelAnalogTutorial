@@ -1,6 +1,10 @@
 // NeopixelAnalogTutorial
 // This is a guage-like display of neopixels that fills or empties as the potentiometer is turned.
 // John Witherspoon March 25, 2020
+//
+// based on Adafruit Neopixel Examples
+// use under the terms of the GPLv3 license to match the rest of the
+// Adafruit NeoPixel library
 
 #include <Adafruit_NeoPixel.h>
 
