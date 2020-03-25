@@ -8,9 +8,8 @@
 
 #include <Adafruit_NeoPixel.h>
 
-#define NEOPIXEL_PIN  7   //this is Arduino Pin that connects to the Neopixel Data In  
-#define ANALOG_PIN   A5   //this is the Arduino Pin that connects to teh wiper of the potentiometer
-
+#define NEOPIXEL_PIN  7   //this is the Arduino Pin that connects to Neopixel Data In  
+#define ANALOG_PIN   A5   //this is the Arduino Pin that connects to the wiper of the potentiometer
 #define NUMPIXELS     8   //this is the number of Neopixels in the strip
 
 //The following command creates an "instance" of the library called "pixels" that understands 
