@@ -1,0 +1,79 @@
+// NeopixelAnalogTutorial
+// This is a guage-like display of neopixels that fills or empties as the potentiometer is turned.
+// John Witherspoon March 25, 2020
+
+#include <Adafruit_NeoPixel.h>
+
+#define NEOPIXEL_PIN  7   //this is Arduino Pin that connects to the Neopixel Data In  
+#define ANALOG_PIN   A5   //this is the Arduino Pin that connects to teh wiper of the potentiometer
+
+#define NUMPIXELS     8   //this is the number of Neopixels in the strip
+
+//The following command creates an "instance" of the library called "pixels" that understands 
+// how many pixels and on what pin they are connected 
+Adafruit_NeoPixel pixels(NUMPIXELS, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
+
+#define DELAYVAL 100    // Time (in milliseconds) to pause between refreshing the neopixel strip
+
+// this array contains the colour definition triplets for each of the eight pixels
+// the three numbers mix the three promary colours (Red, Green, Blue)
+// the value of each number is between 0 & 255 and defines the intensity of teh primary colour 
+// we are using equal intensities of 50 but combining unequal values will produce different colours
+// be careful of using very high values (over 100) because the neopixels can be very bight and hurt your eyes
+byte pixelColours[8][3] = {
+  { 0,  0,  0},  //pixelColours[0][0],pixelColours[0][1],pixelColours[0][2] BLACK (OFF)
+  { 0,  0, 50},  //pixelColours[1][0],pixelColours[1][1],pixelColours[1][2] BLUE
+  { 0, 50,  0},  //pixelColours[2][0],pixelColours[2][1],pixelColours[2][2] GREEN
+  { 0, 50, 50},  //pixelColours[3][0],pixelColours[3][1],pixelColours[3][2] CYAN
+  {50,  0,  0},  //pixelColours[4][0],pixelColours[4][1],pixelColours[4][2] RED
+  {50,  0, 50},  //pixelColours[5][0],pixelColours[5][1],pixelColours[5][2] MAGENTA
+  {50, 50,  0},  //pixelColours[6][0],pixelColours[6][1],pixelColours[6][2] YELLOW
+  {50, 50, 50},  //pixelColours[7][0],pixelColours[7][1],pixelColours[7][2] WHITE
+};
+
+void setup() {
+  Serial.begin(9600);           // initialize Serial Monitor port for debugging
+  pinMode(ANALOG_PIN, INPUT);   // initialize GPIO pin for input
+  pixels.begin();               // INITIALIZE NeoPixel strip object (REQUIRED)
+}
+
+void loop() {
+
+  // the analogRead command reads the voltage connected to the ANALOG_PIN
+  // and converts it a value. 0-5 volts converts to 0-1024
+  int analogValue = analogRead(ANALOG_PIN);
+
+  //the map command onverts the analog input value (0-1024 to the pixel index 0-7)
+  //this will be the highest pixel lit
+  // note we use 0-1015 instead of 1024 because the input doesnt quite reach the full 5v
+  int pixelIndex = map(analogValue, 0, 1015, 0, 7); //map(value, fromLow, fromHigh, toLow, toHigh)
+
+  // The first NeoPixel in a strip is #0, second is 1, all the way up
+  // to the count of pixels minus one.
+
+  pixels.clear(); // start by setting all pixel colors to 'off'
+
+  for (int i = 0; i <= pixelIndex; i++) { // For each pixel...
+
+    // pixels.Color() takes RGB values, from 0,0,0 up to 255,255,255
+    // note that the first pixel (0) is always off because we are setting it to (0,0,0)
+
+    //Pre-defined array approach:
+    //Here we use the pixelColour array to define the three digit colour for each pixel:
+    pixels.setPixelColor(i, pixels.Color(pixelColours[i][0], pixelColours[i][1], pixelColours[i][2]));
+
+    //Binary math approach:
+    // Here we're calculating the three digit colour from the binary 'bits' of the variable i
+    // 0=(000),1=(001),2=(010),3=(011),4=(100),5=(101),6=(110),7=(111)
+    //pixels.setPixelColor(i, pixels.Color(50 * (bitRead(i, 2)), 50 * (bitRead(i, 1)), 50 * bitRead(i, 0)));
+
+    //single colour appraoch:
+    // Here we're setting the colour of each pixel to be the same:
+    //pixels.setPixelColor(i, pixels.Color(0, 0, 50));  //pixels.Color(Red, Green, Blue);
+
+  }
+
+  pixels.show();   // Send the updated pixel colors to the hardware.
+  delay(DELAYVAL); // Pause before next pass through loop
+
+}
